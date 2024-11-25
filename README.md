@@ -65,7 +65,7 @@ Backend: Create a Dockerfile for the backend that installs Node.js, copies appli
        EXPOSE 5000
        CMD ["npm", "start"]
   Frontend: Create a Dockerfile for the frontend React application, which installs dependencies and builds the production-ready app:
-       # Frontend Dockerfile
+  # Frontend Dockerfile
           FROM node:16
           WORKDIR /app
           COPY ./frontend/package*.json ./
@@ -74,8 +74,8 @@ Backend: Create a Dockerfile for the backend that installs Node.js, copies appli
           RUN npm run build
           EXPOSE 3000
           CMD ["npm", "start"]
-    Docker Compose: Define services for the frontend, backend, and MongoDB database in a docker-compose.yml file:
-                version: '3'
+  Docker Compose: Define services for the frontend, backend, and MongoDB database in a docker-compose.yml file:
+    version: '3'
         services:
           backend:
             build: ./backend
@@ -93,9 +93,11 @@ Backend: Create a Dockerfile for the backend that installs Node.js, copies appli
               - "27017:27017"
     Run the multi-container application with:
          docker-compose up
+         
 3. Set Up Continuous Integration and Deployment (CI/CD)
+   
 Configure GitHub Actions (or another CI/CD tool) to automatically run tests and deploy the application. Create a .github/workflows/ci.yml file for GitHub Actions:
-      name: CI/CD Pipeline
+name: CI/CD Pipeline
 on:
   push:
     branches:
@@ -128,20 +130,22 @@ jobs:
           heroku git:remote -a <heroku-app-name>
           git push heroku main
 This file defines the CI pipeline that installs dependencies, runs tests, and deploys the application to a cloud environment (e.g., Heroku, AWS)
+
 4. Configure Infrastructure as Code (IaC)
 Use Terraform to define the infrastructure resources such as EC2 instances, load balancers, and databases:
-         resource "aws_instance" "mern_app" {
+         resource "aws_instance" "mern_app"
+   {
            ami           = "ami-12345678"
            instance_type = "t2.micro"
            key_name      = "your-key-pair"
            tags = {
              Name = "MERN Application Server"
            }
-         }
+ }
  Deploy infrastructure using:
         terraform init
        terraform apply
-5. Monitor and Manage the Application
+6. Monitor and Manage the Application
 Use monitoring tools like Prometheus, Grafana, or New Relic to track application performance and uptime.
 Set up alerts to notify when certain thresholds (e.g., high latency or low disk space) are crossed.
 
