@@ -18,59 +18,135 @@ A sample landing page with my CV.
  .[CV](https://github.com/IQRAZAFAR927/Devops-Assignment3/blob/4fac9e179f4efe774523636fb33934005d3d162d/index.html)
 
 
-   # Quick Guide to DevOps Implementation in the Data Preprocessing Workflow
+   # Quick Guide to DevOps Implementation for Deploying a MERN Application
 
-   This repository applies DevOps principles to automate and streamline a data preprocessing workflow for scraping and processing BBC News website data. Here's a breakdown of how DevOps is utilized and a guide to implementing it:
+  This repository demonstrates the use of DevOps practices for deploying a MERN application to a cloud environment. By integrating automation, version control, and continuous delivery pipelines, this workflow ensures that the MERN stack application is deployed seamlessly and consistently. Below is a breakdown of key practices and steps for setting up this workflow.
    # Key DevOps Practices Applied:
 
-1-Automation with Apache Airflow:
+1-Automation with CI/CD Pipelines:
 
-An Airflow DAG (bbc_news_dag) automates the daily execution of data extraction and preprocessing tasks, reducing manual intervention and ensuring consistency.
+Continuous Integration (CI) and Continuous Deployment (CD) pipelines automate the build, test, and deployment processes.
+Tools like GitHub Actions or GitLab CI are configured to automatically build and test the application whenever changes are pushed to the repository.
+The CD pipeline ensures the application is automatically deployed to a cloud environment (e.g., AWS, Heroku, DigitalOcean) after successful tests.
 
-2-Version Control with DVC:
+2-Containerization with Docker:
 
-Data Version Control (DVC) tracks versions of the preprocessed data stored in CSV files. This ensures reproducibility, collaboration, and rollback capabilities.
+Docker is used to containerize the MERN application, ensuring that the app runs consistently across different environments.
+A Dockerfile defines the container environment for both the backend (Node/Express) and frontend (React), while docker-compose.yml manages multi-container setups for both services.
 
-3-Code and Workflow Management:
+3-Version Control and Collaboration:
 
-A structured Python script (fetch_and_preprocess_data.py) performs extraction and preprocessing using libraries like BeautifulSoup and requests.
-The GitHub repository maintains documentation and code organization, following DevOps best practices for codebase management.
+The application is managed using Git for version control, ensuring proper tracking of changes, collaborative workflows, and rollback capability.
+A Git branching strategy (e.g., Git Flow) is followed to organize development, testing, and production branches.
 
-4-Infrastructure as Code (IaC):
+4-Infrastructure as Code (IaC)::
 
-The use of Docker simplifies setting up and running Apache Airflow, encapsulating dependencies and ensuring a consistent environment.
+Using Terraform or AWS CloudFormation, infrastructure is defined as code, enabling automatic provisioning of cloud resources such as virtual machines, databases, and networking components.
+This allows for easy and consistent deployment of cloud infrastructure with minimal manual intervention.
 
 # Step-by-Step Guide to Implementing the Workflow:
-"Setting up Environmnet
+1. Set Up the Environment
+Clone the repository and navigate to the project directory:
+      git clone <repository-url>
+      cd <repository-directory>
+Install required dependencies for both the backend (Node.js/Express) and frontend (React):
+      cd backend
+      npm install
+      cd ../frontend
+      npm install
+2. Containerize the Application Using Docker
+Backend: Create a Dockerfile for the backend that installs Node.js, copies application files, installs dependencies, and exposes the appropriate port
+  # Backend Dockerfile
+       FROM node:16
+       WORKDIR /app
+       COPY ./backend/package*.json ./
+       RUN npm install
+       COPY ./backend ./
+       EXPOSE 5000
+       CMD ["npm", "start"]
+  Frontend: Create a Dockerfile for the frontend React application, which installs dependencies and builds the production-ready app:
+       # Frontend Dockerfile
+          FROM node:16
+          WORKDIR /app
+          COPY ./frontend/package*.json ./
+          RUN npm install
+          COPY ./frontend ./
+          RUN npm run build
+          EXPOSE 3000
+          CMD ["npm", "start"]
+    Docker Compose: Define services for the frontend, backend, and MongoDB database in a docker-compose.yml file:
+                version: '3'
+        services:
+          backend:
+            build: ./backend
+            ports:
+              - "5000:5000"
+            depends_on:
+              - mongo
+          frontend:
+            build: ./frontend
+            ports:
+              - "3000:3000"
+          mongo:
+            image: mongo
+            ports:
+              - "27017:27017"
+    Run the multi-container application with:
+         docker-compose up
+3. Set Up Continuous Integration and Deployment (CI/CD)
+Configure GitHub Actions (or another CI/CD tool) to automatically run tests and deploy the application. Create a .github/workflows/ci.yml file for GitHub Actions:
+      name: CI/CD Pipeline
+on:
+  push:
+    branches:
+      - main
 
-. Install Python and ensure pip is available.
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '16'
 
-Clone the repository:
+      - name: Install dependencies
+        run: npm install
 
-git clone <repository-url>
-cd <repository-directory>
+      - name: Run tests
+        run: npm test
 
-.Install required dependencies:
-pip install -r requirements.txt
+      - name: Build backend
+        run: cd backend && npm run build
 
-.Run the python script
-python fetch_and_preprocess_data.py
-
-.intialzie DVC
-dvc init
-dvc add preprocessed_data.csv
-
-.Track changes 
-git add preprocessed_data.csv.dvc .gitignore
-git commit -m "Add preprocessed data with DVC"
-dvc push
-
-.automate with apache workflow
-docker-compose up
-
+      - name: Deploy to Heroku (or other cloud provider)
+        run: |
+          heroku login
+          heroku git:remote -a <heroku-app-name>
+          git push heroku main
+This file defines the CI pipeline that installs dependencies, runs tests, and deploys the application to a cloud environment (e.g., Heroku, AWS)
+4. Configure Infrastructure as Code (IaC)
+Use Terraform to define the infrastructure resources such as EC2 instances, load balancers, and databases:
+         resource "aws_instance" "mern_app" {
+           ami           = "ami-12345678"
+           instance_type = "t2.micro"
+           key_name      = "your-key-pair"
+           tags = {
+             Name = "MERN Application Server"
+           }
+         }
+ Deploy infrastructure using:
+        terraform init
+       terraform apply
+5. Monitor and Manage the Application
+Use monitoring tools like Prometheus, Grafana, or New Relic to track application performance and uptime.
+Set up alerts to notify when certain thresholds (e.g., high latency or low disk space) are crossed.
 
 # Conclusion
-This workflow demonstrates the effective application of DevOps practices, combining automation, version control, and reproducibility. By integrating Airflow and DVC, the pipeline ensures consistent and scalable data preprocessing.
+By applying DevOps principles, this workflow ensures that the MERN application is deployed in a consistent, automated, and reliable manner. Docker containers provide environment consistency, while CI/CD pipelines automate testing and deployment. Infrastructure as Code ensures the cloud infrastructure is reproducible and manageable, making the deployment process more efficient and scalable.
 
 
 # Blog summaries 
