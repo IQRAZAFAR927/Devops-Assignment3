@@ -92,60 +92,60 @@ Backend: Create a Dockerfile for the backend that installs Node.js, copies appli
                      ports:
                        - "27017:27017"
                     
-Run the multi-container application with:
+    Run the multi-container application with:
          docker-compose up
          
 3. Set Up Continuous Integration and Deployment (CI/CD)
    
 Configure GitHub Actions (or another CI/CD tool) to automatically run tests and deploy the application. Create a .github/workflows/ci.yml file for GitHub Actions:
-name: CI/CD Pipeline
-on:
-  push:
-    branches:
-      - main
-
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Run tests
-        run: npm test
-
-      - name: Build backend
-        run: cd backend && npm run build
-
-      - name: Deploy to Heroku (or other cloud provider)
-        run: |
-          heroku login
-          heroku git:remote -a <heroku-app-name>
-          git push heroku main
+     name: CI/CD Pipeline
+     on:
+       push:
+         branches:
+           - main
+     jobs:
+       build:
+         runs-on: ubuntu-latest
+         steps:
+           - name: Checkout repository
+             uses: actions/checkout@v2
+             
+           - name: Set up Node.js
+             uses: actions/setup-node@v2
+             with:
+               node-version: '16'
+     
+           - name: Install dependencies
+             run: npm install
+     
+           - name: Run tests
+             run: npm test
+     
+           - name: Build backend
+             run: cd backend && npm run build
+     
+           - name: Deploy to Heroku (or other cloud provider)
+             run: |
+               heroku login
+               heroku git:remote -a <heroku-app-name>
+               git push heroku main
+          
 This file defines the CI pipeline that installs dependencies, runs tests, and deploys the application to a cloud environment (e.g., Heroku, AWS)
 
 4. Configure Infrastructure as Code (IaC)
 Use Terraform to define the infrastructure resources such as EC2 instances, load balancers, and databases:
-         resource "aws_instance" "mern_app"
-   {
-           ami           = "ami-12345678"
-           instance_type = "t2.micro"
-           key_name      = "your-key-pair"
-           tags = {
-             Name = "MERN Application Server"
-           }
- }
- Deploy infrastructure using:
-        terraform init
-       terraform apply
+          resource "aws_instance" "mern_app"
+          {
+                  ami           = "ami-12345678"
+                  instance_type = "t2.micro"
+                  key_name      = "your-key-pair"
+                  tags = {
+                    Name = "MERN Application Server"
+                  }
+         }
+        Deploy infrastructure using:
+               terraform init
+              terraform apply
 6. Monitor and Manage the Application
 Use monitoring tools like Prometheus, Grafana, or New Relic to track application performance and uptime.
 Set up alerts to notify when certain thresholds (e.g., high latency or low disk space) are crossed.
