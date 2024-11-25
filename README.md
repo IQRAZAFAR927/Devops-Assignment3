@@ -75,22 +75,23 @@ Backend: Create a Dockerfile for the backend that installs Node.js, copies appli
           EXPOSE 3000
           CMD ["npm", "start"]
   Docker Compose: Define services for the frontend, backend, and MongoDB database in a docker-compose.yml file:
-    version: '3'
-        services:
-          backend:
-            build: ./backend
-            ports:
-              - "5000:5000"
-            depends_on:
-              - mongo
-          frontend:
-            build: ./frontend
-            ports:
-              - "3000:3000"
-          mongo:
-            image: mongo
-            ports:
-              - "27017:27017"
+          version: '3'
+          services:
+                backend:
+                  build: ./backend
+                  ports:
+                    - "5000:5000"
+                  depends_on:
+                    - mongo
+                frontend:
+                  build: ./frontend
+                  ports:
+                    - "3000:3000"
+                mongo:
+                  image: mongo
+                  ports:
+                    - "27017:27017"
+                    
     Run the multi-container application with:
          docker-compose up
          
